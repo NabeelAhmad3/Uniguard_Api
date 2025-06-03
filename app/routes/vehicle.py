@@ -10,11 +10,11 @@ router = APIRouter()
 
 @router.get("/{vehicle_id}")
 def read_vehicle(
-    vehicle_id: int,
+    vehicle_id: str,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    vehicle = db.query(UserData).filter(UserData.id == vehicle_id).first()
+    vehicle = db.query(UserData).filter(UserData.plate_number == vehicle_id).first()
     if not vehicle:
         raise HTTPException(status_code=404, detail="Vehicle not found")
     

@@ -48,7 +48,7 @@ class AccessStatusEnum(str, Enum):
 
 class AccessLogBase(BaseModel):
     user_id: Optional[int] = None
-    vehicle_id: Optional[int] = None
+    plate_number: Optional[str] = None
     status: AccessStatusEnum = AccessStatusEnum.pending
 
 class AccessLogCreate(AccessLogBase):
@@ -104,6 +104,7 @@ class NormalUserResponse(BaseModel):
     email:EmailStr
     cnic:str
     model:str
+    logs: List[AccessLogResponse] = []
 
 class ChangePasswordRequest(BaseModel):
     current_password: str

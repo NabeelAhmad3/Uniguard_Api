@@ -52,19 +52,19 @@ class UserData(Base):
     color = Column(String, nullable=True)
     user_id = Column(Integer, ForeignKey("users.id"))
 
-    # password = Column(String, nullable=False)
     user = relationship("User")
-    logs = relationship("AccessLog", back_populates="vehicle")
+    logs = relationship("AccessLog", back_populates="vehicle", primaryjoin="UserData.plate_number == AccessLog.plate_number")
 
 
 class AccessLog(Base):
     __tablename__ = "access_logs"
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
-    vehicle_id = Column(Integer, ForeignKey("userdata.id"), nullable=True)
+    plate_number = Column(String, ForeignKey("userdata.plate_number"), nullable=True)
+    unrecognized_plate = Column(String, nullable=True)
     entry_time = Column(DateTime, default=datetime.utcnow)
     exit_time = Column(DateTime, nullable=True)
-    status = Column(Enum(AccessStatusEnum), default=AccessStatusEnum.pending)  # Fix: Use Enum instead of String
+    status = Column(Enum(AccessStatusEnum), default=AccessStatusEnum.pending)
 
     user = relationship("User", back_populates="logs")
-    vehicle = relationship("UserData", back_populates="logs")
+    vehicle = relationship("UserData", back_populates="logs", primaryjoin="UserData.plate_number == AccessLog.plate_number")

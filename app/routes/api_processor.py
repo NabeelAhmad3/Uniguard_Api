@@ -372,26 +372,39 @@ async def process_gate_video(
             "confidence": result.get("confidence", 0),
             "face_confidence": result.get("face_confidence", 0),
             "user_id": result.get("user_id"),  # Include user_id even if None
-            "vehicle_id": result.get("vehicle_id")  # Include vehicle_id even if None
-        }
+            "plate_number": result.get("plate_number")  # Include vehicle_id even if None
+          }
         
         # Add vehicle and user details if plate was recognized
-        if result.get("plate_match") and "details" in result and result["details"]:
-            details = result["details"]
-            response["details"] = {
-                "vehicle_info": {
-                    "plate_number": details.get("vehicle_info", {}).get("plate_number", "N/A"),
-                    "model": details.get("vehicle_info", {}).get("model", "N/A"),
-                    "color": details.get("vehicle_info", {}).get("color", "N/A")
-                },
-                "user_info": {
-                    "name": details.get("user_info", {}).get("name", "N/A"),
-                    "email": details.get("user_info", {}).get("email", "N/A")
-                }
-            }
+        # if result.get("plate_match") and "details" in result and result["details"]:
+        #     details = result["details"]
+        #     response["details"] = {
+        #         "vehicle_info": {
+        #             "plate_number": details.get("vehicle_info", {}).get("plate_number", "N/A"),
+        #             "model": details.get("vehicle_info", {}).get("model", "N/A"),
+        #             "color": details.get("vehicle_info", {}).get("color", "N/A")
+        #         },
+        #         "user_info": {
+        #             "name": details.get("user_info", {}).get("name", "N/A"),
+        #             "email": details.get("user_info", {}).get("email", "N/A")
+        #         }
+        #     }
         
         return JSONResponse(content=response)
+        plate_number = result.get("plate_number")
+        details = result.get("details", {})
 
+        response["details"] = {
+            "vehicle_info": {
+                "plate_number": plate_number or "N/A",
+                "model": details.get("vehicle_info", {}).get("model", "N/A"),
+                "color": details.get("vehicle_info", {}).get("color", "N/A")
+            },
+            "user_info": {
+                "name": details.get("user_info", {}).get("name", "N/A"),
+                "email": details.get("user_info", {}).get("email", "N/A")
+            }
+        }
     except Exception as e:
         logging.error(f"Gate video processing error: {str(e)}")
         return JSONResponse(

@@ -384,7 +384,7 @@ def show_dashboard():
             
             # Get vehicle and user details for each log
             for log in recent_logs[:10]:  # Show only last 10
-                vehicle_response = requests.get(f"{API_URL}/vehicles/{log['vehicle_id']}", headers=headers)
+                vehicle_response = requests.get(f"{API_URL}/vehicles/{log['plate_number']}", headers=headers)
                 vehicle = vehicle_response.json() if vehicle_response.status_code == 200 else {"plate_number": "Unknown", "model": "Unknown"}
                 
                 st.write(f"**{log['status']}** - {datetime.fromisoformat(log['entry_time'].replace('Z', '+00:00')).strftime('%Y-%m-%d %H:%M:%S')}")
@@ -850,41 +850,79 @@ def process_gate_video():
                                 else:
                                     st.write("Access denied for security reasons.")
 
+
+
+                            # Replace the logging section in your Streamlit code with this:
+
+# Log the access attempt - modified logic
+                                # user_id = response_json.get("user_id")
+                                # plate_number = response_json.get("plate_number")
+                                # status = "Granted" if response_json.get("access_granted") else "Denied"
+
+                                # # Always try to log if we have at least a plate number
+                                # if plate_number:
+                                #     try:
+                                #         log_payload = {
+                                #             "status": status,
+                                #             "timestamp": datetime.utcnow().isoformat(),
+                                #             "plate_number": plate_number
+                                #         }
+
+                                #         # Include user_id only if available (for recognized users)
+                                #         if user_id is not None:
+                                #             log_payload["user_id"] = user_id
+
+                                #         log_response = requests.post(
+                                #             f"{API_URL}/access/",
+                                #             json=log_payload,
+                                #             headers=headers
+                                #         )
+
+                                #         if log_response.status_code == 200:
+                                #             st.info("✓ Access attempt logged successfully")
+                                #         else:
+                                #             st.warning("⚠️ Failed to record access attempt in logs")
+
+                                #     except Exception as e:
+                                #         st.warning(f"⚠️ Error logging access: {str(e)}")
+                                # else:
+                                #     st.warning("⚠️ No plate detected - access attempt not logged")
+
                             # Log the access attempt
-                            user_id = response_json.get("user_id")
-                            vehicle_id = response_json.get("vehicle_id")
-                            status = "Granted" if response_json.get("access_granted") else "Denied"
+                        #     user_id = response_json.get("user_id")
+                        #     plate_number = response_json.get("plate_number")
+                        #     status = "Granted" if response_json.get("access_granted") else "Denied"
                         
-                        # Only attempt to log if we have both IDs
-                        # Always try to log the access attempt
-                            try:
-                                log_payload = {
-                                    "status": status,  # "Granted" or "Denied"
-                                    "timestamp": datetime.utcnow().isoformat()  # optional: include time if your API uses it
-                                }
+                        # # Only attempt to log if we have both IDs
+                        # # Always try to log the access attempt
+                        #     try:
+                        #         log_payload = {
+                        #             "status": status,  # "Granted" or "Denied"
+                        #             "timestamp": datetime.utcnow().isoformat()  # optional: include time if your API uses it
+                        #         }
 
-                                # Include user_id or vehicle_id if available
-                                if user_id is not None:
-                                    log_payload["user_id"] = user_id
-                                if vehicle_id is not None:
-                                    log_payload["vehicle_id"] = vehicle_id
+                        #         # Include user_id or plate_number if available
+                        #         if user_id is not None:
+                        #             log_payload["user_id"] = user_id
+                        #         if plate_number is not None:
+                        #             log_payload["plate_number"] = plate_number
 
-                                log_response = requests.post(
-                                    f"{API_URL}/access/",
-                                    json=log_payload,
-                                    headers=headers
-                                )
+                        #         log_response = requests.post(
+                        #             f"{API_URL}/access/",
+                        #             json=log_payload,
+                        #             headers=headers
+                        #         )
 
-                                if log_response.status_code == 200:
-                                    st.info("✓ Access attempt logged successfully")
-                                else:
-                                    st.warning("⚠️ Failed to record access attempt in logs")
+                        #         if log_response.status_code == 200:
+                        #             st.info("✓ Access attempt logged successfully")
+                        #         else:
+                        #             st.warning("⚠️ Failed to record access attempt in logs")
 
-                            except Exception as e:
-                                st.warning(f"⚠️ Error logging access: {str(e)}")
+                        #     except Exception as e:
+                        #         st.warning(f"⚠️ Error logging access: {str(e)}")
 
-                        else:
-                            st.info("Access attempt not logged - user and vehicle could not be identified at all")
+                        # else:
+                        #     st.info("Access attempt not logged - user and vehicle could not be identified at all")
                                             
                     except requests.exceptions.RequestException as e:
                         st.error(f"Network error: {str(e)}")
@@ -906,6 +944,185 @@ def process_gate_video():
 
 
 
+
+# def view_access_logs():
+#     st.header("Access Logs")
+    
+#     headers = {"Authorization": f"Bearer {st.session_state.token}"}
+    
+#     # Date range filters
+#     col1, col2 = st.columns(2)
+#     with col1:
+#         start_date = st.date_input("Start Date", value=datetime.now() - timedelta(days=30))
+#     with col2:
+#         end_date = st.date_input("End Date", value=datetime.now())
+    
+#     status_filter = st.multiselect(
+#         "Status Filter", 
+#         options=["Granted", "Denied", "Pending"],
+#         default=["Granted", "Denied", "Pending"]
+#     )
+    
+#     if st.button("Fetch Logs"):
+#         try:
+#             # Get access logs
+#             response = requests.get(f"{API_URL}/access", headers=headers)
+            
+#             if response.status_code == 200:
+#                 logs = response.json()
+                
+#                 # Convert to DataFrame for easier filtering
+#                 df_logs = pd.DataFrame(logs)
+#                 if not df_logs.empty:
+#                     # Convert date strings to datetime objects
+#                     df_logs["entry_time"] = pd.to_datetime(df_logs["entry_time"])
+#                     df_logs["exit_time"] = pd.to_datetime(df_logs["exit_time"])
+                    
+#                     # Apply filters
+#                     df_logs = df_logs[
+#                         (df_logs["entry_time"].dt.date >= start_date) &
+#                         (df_logs["entry_time"].dt.date <= end_date) &
+#                         (df_logs["status"].isin(status_filter))
+#                     ]
+                    
+#                     if not df_logs.empty:
+#                         # Add vehicle and user details
+#                         vehicle_details = {}
+#                         user_details = {}
+                        
+#                         # Get unique vehicle and user IDs
+#                         vehicle_ids = df_logs["plate_number"].unique()
+#                         user_ids = df_logs["user_id"].unique()
+                        
+#                         # Fetch vehicle details
+#                         for vid in vehicle_ids:
+#                             v_response = requests.get(f"{API_URL}/vehicles/{vid}", headers=headers)
+#                             if v_response.status_code == 200:
+#                                 vehicle_details[vid] = v_response.json()
+                        
+#                         # Fetch user details (admin only)
+#                         if st.session_state.user_role == "admin":
+#                             for uid in user_ids:
+#                                 u_response = requests.get(f"{API_URL}/users/{uid}", headers=headers)
+#                                 if u_response.status_code == 200:
+#                                     user_details[uid] = u_response.json()
+                        
+#                         # Display logs
+#                         st.subheader(f"Access Logs ({len(df_logs)} records)")
+                        
+#                         # for _, log in df_logs.iterrows():
+#                         #     col1, col2 = st.columns([1, 3])
+                            
+#                         #     with col1:
+#                         #         if log["status"] == "Granted":
+#                         #             st.markdown("### ✅")
+#                         #         elif log["status"] == "Denied":
+#                         #             st.markdown("### ❌")
+#                         #         else:
+#                         #             st.markdown("### ⏳")
+                            
+#                         #     with col2:
+#                         #         # Vehicle info
+#                         #         vehicle = vehicle_details.get(log["plate_number"], {"plate_number": "Unknown", "model": "Unknown"})
+#                         #         st.write(f"**Vehicle:** {vehicle.get('plate_number')} ({vehicle.get('model')})")
+                                
+#                         #         # User info (if admin)
+#                         #         if st.session_state.user_role == "admin":
+#                         #             user = user_details.get(log["user_id"], {"name": "Unknown", "email": "Unknown"})
+#                         #             st.write(f"**User:** {user.get('name')} ({user.get('email')})")
+                                
+#                         #         # Time info
+#                         #         entry_time = log["entry_time"].strftime("%Y-%m-%d %H:%M:%S")
+#                         #         st.write(f"**Entry Time:** {entry_time}")
+                                
+#                         #         if not pd.isna(log["exit_time"]):
+#                         #             exit_time = log["exit_time"].strftime("%Y-%m-%d %H:%M:%S")
+#                         #             st.write(f"**Exit Time:** {exit_time}")
+                            
+#                         #     st.markdown("---")
+#                         for _, log in df_logs.iterrows():
+#                             col1, col2 = st.columns([1, 3])
+                            
+#                             with col1:
+#                                 if log["status"] == "Granted":
+#                                     st.markdown("### ✅")
+#                                 elif log["status"] == "Denied":
+#                                     st.markdown("### ❌")
+#                                 else:
+#                                     st.markdown("### ⏳")
+                            
+#                             with col2:
+#                                 # Check if this is a recognized or unrecognized plate
+#                                 plate_number = None
+#                                 is_recognized = False
+                                
+#                                 # If plate_number exists and is not null, it's recognized
+#                                 if pd.notna(log.get("plate_number")) and log.get("plate_number"):
+#                                     plate_number = log["plate_number"]
+#                                     is_recognized = True
+#                                 # Otherwise check for unrecognized_plate field
+#                                 elif pd.notna(log.get("unrecognized_plate")) and log.get("unrecognized_plate"):
+#                                     plate_number = log["unrecognized_plate"]
+#                                     is_recognized = False
+#                                 else:
+#                                     plate_number = "Unknown"
+#                                     is_recognized = False
+                                
+#                                 # Display vehicle information
+#                                 if is_recognized:
+#                                     # Try to fetch vehicle details for recognized plates
+#                                     try:
+#                                         v_response = requests.get(f"{API_URL}/vehicles/{plate_number}", headers=headers)
+#                                         if v_response.status_code == 200:
+#                                             vehicle = v_response.json()
+#                                             model = vehicle.get('model', 'Unknown')
+#                                             color = vehicle.get('color', 'Unknown')
+#                                             st.write(f"**Vehicle:** {plate_number} ({model} {color})")
+#                                         else:
+#                                             st.write(f"**Vehicle:** {plate_number} (Recognized)")
+#                                     except:
+#                                         st.write(f"**Vehicle:** {plate_number} (Recognized)")
+#                                 else:
+#                                     st.write(f"**Vehicle:** {plate_number} (Unrecognized)")
+                                
+#                                 # User info (if admin)
+#                                 if st.session_state.user_role == "admin":
+#                                     if is_recognized and pd.notna(log.get("user_id")):
+#                                         try:
+#                                             u_response = requests.get(f"{API_URL}/users/{log['user_id']}", headers=headers)
+#                                             if u_response.status_code == 200:
+#                                                 user = u_response.json()
+#                                                 st.write(f"**User:** {user.get('name', 'Unknown')} ({user.get('email', 'Unknown')})")
+#                                             else:
+#                                                 st.write("**User:** Unknown")
+#                                         except:
+#                                             st.write("**User:** Unknown")
+#                                     else:
+#                                         st.write("**User:** Unknown (Unrecognized Vehicle)")
+                                
+#                                 # Time info
+#                                 entry_time = log["entry_time"].strftime("%Y-%m-%d %H:%M:%S")
+#                                 st.write(f"**Entry Time:** {entry_time}")
+                                
+#                                 if not pd.isna(log["exit_time"]) and log["exit_time"]:
+#                                     exit_time = log["exit_time"].strftime("%Y-%m-%d %H:%M:%S")
+#                                     st.write(f"**Exit Time:** {exit_time}")
+                                
+#                                 # Add recognition status indicator
+#                                 if is_recognized:
+#                                     st.caption("🔍 Recognized Vehicle")
+#                                 else:
+#                                     st.caption("⚠️ Unrecognized Vehicle")
+                            
+#                             st.markdown("---")
+#                     else:
+#                         st.info("No logs found for the selected filters.")
+#                 else:
+#                     st.info("No access logs available.")
+#             else:
+#                 st.error("Failed to fetch access logs")
+#         except Exception as e:
+#             st.error(f"Error: {str(e)}")
 
 def view_access_logs():
     st.header("Access Logs")
@@ -948,27 +1165,6 @@ def view_access_logs():
                     ]
                     
                     if not df_logs.empty:
-                        # Add vehicle and user details
-                        vehicle_details = {}
-                        user_details = {}
-                        
-                        # Get unique vehicle and user IDs
-                        vehicle_ids = df_logs["vehicle_id"].unique()
-                        user_ids = df_logs["user_id"].unique()
-                        
-                        # Fetch vehicle details
-                        for vid in vehicle_ids:
-                            v_response = requests.get(f"{API_URL}/vehicles/{vid}", headers=headers)
-                            if v_response.status_code == 200:
-                                vehicle_details[vid] = v_response.json()
-                        
-                        # Fetch user details (admin only)
-                        if st.session_state.user_role == "admin":
-                            for uid in user_ids:
-                                u_response = requests.get(f"{API_URL}/users/{uid}", headers=headers)
-                                if u_response.status_code == 200:
-                                    user_details[uid] = u_response.json()
-                        
                         # Display logs
                         st.subheader(f"Access Logs ({len(df_logs)} records)")
                         
@@ -984,22 +1180,40 @@ def view_access_logs():
                                     st.markdown("### ⏳")
                             
                             with col2:
-                                # Vehicle info
-                                vehicle = vehicle_details.get(log["vehicle_id"], {"plate_number": "Unknown", "model": "Unknown"})
-                                st.write(f"**Vehicle:** {vehicle.get('plate_number')} ({vehicle.get('model')})")
+                                # Get vehicle details from the log data
+                                vehicle_details = log.get("vehicle_details", {})
+                                plate_number = vehicle_details.get("plate_number", "Unknown")
+                                model = vehicle_details.get("model", "Unknown")
+                                color = vehicle_details.get("color", "Unknown")
                                 
-                                # User info (if admin)
+                                # Display plate number with recognition status
+                                if log.get("is_recognized", False):
+                                    st.write(f"**Vehicle:** {plate_number} ({model} {color})")
+                                else:
+                                    st.write(f"**Vehicle:** {plate_number} (Unrecognized)")
+                                
+                                # User info (if admin and recognized vehicle)
                                 if st.session_state.user_role == "admin":
-                                    user = user_details.get(log["user_id"], {"name": "Unknown", "email": "Unknown"})
-                                    st.write(f"**User:** {user.get('name')} ({user.get('email')})")
+                                    if log.get("is_recognized", False):
+                                        owner_name = vehicle_details.get("owner_name", "Unknown")
+                                        owner_email = vehicle_details.get("owner_email", "Unknown")
+                                        st.write(f"**User:** {owner_name} ({owner_email})")
+                                    else:
+                                        st.write("**User:** Unknown (Unrecognized Vehicle)")
                                 
                                 # Time info
                                 entry_time = log["entry_time"].strftime("%Y-%m-%d %H:%M:%S")
                                 st.write(f"**Entry Time:** {entry_time}")
                                 
-                                if not pd.isna(log["exit_time"]):
+                                if not pd.isna(log["exit_time"]) and log["exit_time"]:
                                     exit_time = log["exit_time"].strftime("%Y-%m-%d %H:%M:%S")
                                     st.write(f"**Exit Time:** {exit_time}")
+                                
+                                # Add recognition status indicator
+                                if log.get("is_recognized", False):
+                                    st.caption("🔍 Recognized Vehicle")
+                                else:
+                                    st.caption("⚠️ Unrecognized Vehicle")
                             
                             st.markdown("---")
                     else:

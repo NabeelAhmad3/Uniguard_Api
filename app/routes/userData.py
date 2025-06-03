@@ -80,7 +80,6 @@ class UserDataUpdate(BaseModel):
     phone_number: Optional[str] = None
     cnic: Optional[str] = None
     registration_number: Optional[str] = None
-    # password:Optional[str]=None
     plate_number: Optional[str] = None
     model: Optional[str] = None
     color: Optional[str] = None
