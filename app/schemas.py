@@ -25,22 +25,6 @@ class UserResponse(UserBase):
         from_attributes = True
 
 
-
-# class VehicleBase(BaseModel):
-#     plate_number: str
-#     model: str
-#     color: str
-
-# class VehicleCreate(VehicleBase):
-#     pass
-
-# class VehicleResponse(VehicleBase):
-#     id: int
-#     user_id: int
-    
-#     class Config:
-#         from_attributes = True
-
 class AccessStatusEnum(str, Enum):
     pending = "Pending"
     granted = "Granted"
@@ -85,6 +69,7 @@ class UserDataResponse(UserDataBase):
 
     face_image_data: Optional[str] = None
 
+    logs: List[AccessLogResponse] = []
     class Config:
         from_attributes = True
 
@@ -93,7 +78,6 @@ class UserDataResponse(UserDataBase):
 
 class UserSearch(BaseModel):
     cnic:str
-
 
 class NormalUserResponse(BaseModel):
     name:str

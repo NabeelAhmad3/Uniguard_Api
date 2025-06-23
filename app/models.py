@@ -6,13 +6,10 @@ from datetime import datetime
 from .schemas import AccessStatusEnum
 
 
-
 class Role(enum.Enum):
     admin = "admin"
     user = "user"
 
-
-# this table is for admins who will control the web app dont confuse this User with the userdata
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, index=True)
@@ -23,18 +20,6 @@ class User(Base):
     
 
     logs = relationship("AccessLog", back_populates="user")
-
-# class Vehicle(Base):
-#     __tablename__ = "vehicles"
-#     id = Column(Integer, primary_key=True, index=True)
-#     plate_number = Column(String, unique=True, nullable=False)
-#     model = Column(String, nullable=False)
-#     color = Column(String, nullable=False)
-#     user_id = Column(Integer, ForeignKey("users.id"))
-    
-#     owner = relationship("User", back_populates="vehicles")
-#     logs = relationship("AccessLog", back_populates="vehicle")
-
 
 
 class UserData(Base):

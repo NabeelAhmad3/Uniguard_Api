@@ -44,12 +44,9 @@ def read_user(
 @router.post("/get_user_data", response_model=NormalUserResponse)
 def get_user_detail(
     user_search: UserSearch,
-    db: Session = Depends(get_db), 
-    # current_user: User = Depends(get_current_user)
+    db: Session = Depends(get_db)
 ):
-    # if current_user.role.name != "admin" and current_user.role.name != "user":
-    #     raise HTTPException(status_code=403, detail="Not authorized to access this data")
-    
+  
     user = db.query(UserData).filter(UserData.cnic == user_search.cnic).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")

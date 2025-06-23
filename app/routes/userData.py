@@ -90,14 +90,10 @@ async def get_users(
     current_user: User = Depends(get_current_user), 
     db: Session = Depends(get_db)
 ):
-    # Ensure only admin can access this data
     if current_user.role.name != "admin":
         raise HTTPException(status_code=403, detail="Only admin can access this data")
 
     query = db.query(UserData)
-    
-    # if cnic:
-    #     query = query.filter(UserData.cnic == cnic)
 
     user_data = query.all()
 
@@ -106,7 +102,7 @@ async def get_users(
             user.face_image_data = base64.b64encode(user.face_image_data).decode('utf-8')
 
 
-    return user_data  # Returns [] if no users are found (which is expected behavior)
+    return user_data  
 
 
 
@@ -116,12 +112,8 @@ async def get_users(
 @router.get("/cnic/{cnic}", response_model=UserDataResponse)
 async def get_user_by_cnic(
     cnic: str, 
-    current_user: User = Depends(get_current_user), 
     db: Session = Depends(get_db)
 ):
-    # Ensure only admin can access this data
-    if current_user.role.name != "admin":
-        raise HTTPException(status_code=403, detail="Only admin can access this data")
 
     user_data = db.query(UserData).filter(UserData.cnic == cnic).first()
 
@@ -149,7 +141,6 @@ async def update_user_by_id(
     if not user_data:
         raise HTTPException(status_code=404, detail="User not found")
 
-    # Update only fields that are provided
     update_data = userData.dict(exclude_unset=True)
     for key, value in update_data.items():
         setattr(user_data, key, value)
@@ -168,7 +159,6 @@ async def delete_user_by_id(
     current_user: User = Depends(get_current_user), 
     db: Session = Depends(get_db)
 ):
-    # Ensure only admin can delete data
     if current_user.role.name != "admin":
         raise HTTPException(status_code=403, detail="Only admin can delete user data")
 
