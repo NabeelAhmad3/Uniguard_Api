@@ -47,8 +47,6 @@ class AccessLogResponse(AccessLogBase):
         from_attributes = True
 
 
-
-
 class UserDataBase(BaseModel):
     name:str
     email : EmailStr
@@ -74,8 +72,6 @@ class UserDataResponse(UserDataBase):
         from_attributes = True
 
 
-
-
 class UserSearch(BaseModel):
     cnic:str
 
@@ -88,8 +84,36 @@ class NormalUserResponse(BaseModel):
     email:EmailStr
     cnic:str
     model:str
+    face_image_data: Optional[str] = None
     logs: List[AccessLogResponse] = []
 
 class ChangePasswordRequest(BaseModel):
     current_password: str
     new_password: str
+
+class UserDataResponse(BaseModel):
+    id: int
+    name: str
+    email: str
+    phone_number: str
+    cnic: str
+    registration_number: str
+    plate_number: str
+    model: Optional[str] = None
+    color: Optional[str] = None
+    user_id: Optional[int] = None
+    face_image_data: Optional[str] = None  # Base64-encoded image
+
+    class Config:
+        from_attributes = True
+        
+class UserDataUpdate(BaseModel):
+    name: Optional[str] = None
+    email: Optional[EmailStr] = None
+    phone_number: Optional[str] = None
+    cnic: Optional[str] = None
+    registration_number: Optional[str] = None
+    plate_number: Optional[str] = None
+    model: Optional[str] = None
+    color: Optional[str] = None
+    face_embedding: Optional[str] = None
