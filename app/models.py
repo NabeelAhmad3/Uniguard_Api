@@ -27,7 +27,7 @@ class UserData(Base):
     id = Column(Integer,primary_key=True,index=True)
     name = Column(String, nullable=False)
     email = Column(String,nullable=False)
-    phone_number = Column(String,nullable=False,unique=True)
+    car_name = Column(String,nullable=False,unique=True)
     cnic = Column(String,nullable=False,unique=True)
     registration_number = Column(String, nullable=False)
     face_embedding = Column(String, nullable=False)

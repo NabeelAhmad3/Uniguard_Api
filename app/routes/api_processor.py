@@ -71,20 +71,7 @@ async def process_gate_video(
     
         
         return JSONResponse(content=response)
-        plate_number = result.get("plate_number")
-        details = result.get("details", {})
-
-        response["details"] = {
-            "vehicle_info": {
-                "plate_number": plate_number or "N/A",
-                "model": details.get("vehicle_info", {}).get("model", "N/A"),
-                "color": details.get("vehicle_info", {}).get("color", "N/A")
-            },
-            "user_info": {
-                "name": details.get("user_info", {}).get("name", "N/A"),
-                "email": details.get("user_info", {}).get("email", "N/A")
-            }
-        }
+     
     except Exception as e:
         logging.error(f"Gate video processing error: {str(e)}")
         return JSONResponse(

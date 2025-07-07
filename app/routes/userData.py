@@ -21,7 +21,7 @@ def get_user_response(user_data: UserData) -> UserDataResponse:
         id=user_data.id,
         name=user_data.name,
         email=user_data.email,
-        phone_number=user_data.phone_number,
+        car_name=user_data.car_name,
         cnic=user_data.cnic,
         registration_number=user_data.registration_number,
         plate_number=user_data.plate_number,
@@ -35,7 +35,7 @@ def get_user_response(user_data: UserData) -> UserDataResponse:
 async def create_UserData(
     name: str = Form(...),
     email: str = Form(...),
-    phone_number: str = Form(...),
+    car_name: str = Form(...),
     cnic: str = Form(...),
     registration_number: str = Form(...),
     face_image: UploadFile = File(...),
@@ -63,7 +63,7 @@ async def create_UserData(
     new_userData = UserData(
         name=name,
         email=email,
-        phone_number=phone_number,
+        car_name=car_name,
         cnic=cnic,
         registration_number=registration_number,
         face_embedding=face_embedding,

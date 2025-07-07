@@ -10,17 +10,7 @@ def detect_license_plates(
     model_path="./license_plate_detector.pt",
     confidence_threshold=0.45
 ):
-    """
-    Process a video to detect license plates and return unique plate numbers with highest confidence.
-    
-    Args:
-        video_path (str): Path to the input video file
-        model_path (str): Path to the YOLO model file for license plate detection
-        confidence_threshold (float): Confidence threshold for license plate detection
-        
-    Returns:
-        list: List of unique license plate texts with highest confidence scores
-    """
+
     # Configure environment
     os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
     

@@ -50,7 +50,7 @@ class AccessLogResponse(AccessLogBase):
 class UserDataBase(BaseModel):
     name:str
     email : EmailStr
-    phone_number : str
+    car_name : str
     cnic:str
     registration_number:str
     face_embedding:str
@@ -77,7 +77,7 @@ class UserSearch(BaseModel):
 
 class NormalUserResponse(BaseModel):
     name:str
-    phone_number:str
+    car_name:str
     registration_number:str
     plate_number:str
     color:str
@@ -95,7 +95,7 @@ class UserDataResponse(BaseModel):
     id: int
     name: str
     email: str
-    phone_number: str
+    car_name: str
     cnic: str
     registration_number: str
     plate_number: str
@@ -110,7 +110,7 @@ class UserDataResponse(BaseModel):
 class UserDataUpdate(BaseModel):
     name: Optional[str] = None
     email: Optional[EmailStr] = None
-    phone_number: Optional[str] = None
+    car_name: Optional[str] = None
     cnic: Optional[str] = None
     registration_number: Optional[str] = None
     plate_number: Optional[str] = None

@@ -50,9 +50,7 @@ def compare_face_embeddings(known_embedding_str: str, query_embedding: np.ndarra
         return False
         
     known_embedding = decode_face_embedding(known_embedding_str)
-    # Reshape if necessary to match expected dimensions
     known_embedding = known_embedding.reshape(1, -1)
     query_embedding = query_embedding.reshape(1, -1)
     
-    # Compare faces using face_recognition library
     return face_recognition.compare_faces(known_embedding, query_embedding[0], tolerance=tolerance)[0]
